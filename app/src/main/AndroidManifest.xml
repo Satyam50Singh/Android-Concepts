@@ -21,6 +21,11 @@
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
+        <service
+            android:name=".service.DownloadBackgroundService"
+            android:enabled="true"
+            android:exported="false" />
+
         <activity
             android:name=".ui.activities.MainActivity2"
             android:exported="false" />

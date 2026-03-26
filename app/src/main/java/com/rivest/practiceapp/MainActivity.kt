@@ -1,6 +1,7 @@
 package com.rivest.practiceapp
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.rivest.practiceapp.service.DownloadBackgroundService
 import com.rivest.practiceapp.service.MyForegroundService
 import com.rivest.practiceapp.ui.activities.MainActivity2
 
@@ -32,9 +34,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        val button = findViewById<Button>(R.id.button)
-        button.setOnClickListener {
-            createNotificationService()
+        val btnForegroundService = findViewById<Button>(R.id.btn_foreground_service)
+        val btnBackgroundService = findViewById<Button>(R.id.btn_background_service)
+        btnForegroundService.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (checkNotificationPermission()) {
+                    startMyService()
+                } else {
+                    requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 100)
+                }
+            } else {
+                startMyService()
+            }
+        }
+
+        btnBackgroundService.setOnClickListener {
+            val intent = Intent(this, DownloadBackgroundService::class.java)
+            startService(intent)
         }
     }
 
@@ -75,12 +91,8 @@ class MainActivity : AppCompatActivity() {
         Log.e("lifecycle A", "onDestroy")
     }
 
-    private fun createNotificationService() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 100)
-        } else {
-            startMyService()
-        }
+    private fun checkNotificationPermission(): Boolean {
+        return checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onRequestPermissionsResult(
