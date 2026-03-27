@@ -51,6 +51,9 @@ class MusicActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val intent = Intent(this, MusicBoundService::class.java)
+
+        startForegroundService(intent)
+
         bindService(intent, connection, BIND_AUTO_CREATE)
     }
 
@@ -58,7 +61,15 @@ class MusicActivity : AppCompatActivity() {
         val playBtn = findViewById<Button>(R.id.btn_play_music)
 
         playBtn.setOnClickListener {
-            musicBoundService?.playMusic()
+            if (isBound) {
+                if (musicBoundService?.isMusicPlaying() == true) {
+                    playBtn.text = "Play Music"
+                    musicBoundService?.pauseMusic()
+                } else {
+                    playBtn.text = "Pause Music"
+                    musicBoundService?.playMusic()
+                }
+            }
         }
     }
 
@@ -72,5 +83,9 @@ class MusicActivity : AppCompatActivity() {
 
     fun pauseMusic() {
         musicBoundService?.pauseMusic()
+    }
+
+    fun stopMusic() {
+        musicBoundService?.stopMusic()
     }
 }
