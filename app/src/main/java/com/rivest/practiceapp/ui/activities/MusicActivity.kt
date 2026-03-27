@@ -11,12 +11,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.rivest.practiceapp.R
+import com.rivest.practiceapp.listeners.MusicStateListener
 import com.rivest.practiceapp.service.MusicBoundService
 
 class MusicActivity : AppCompatActivity() {
 
     private var musicBoundService: MusicBoundService? = null
     private var isBound = false
+    private lateinit var playBtn: Button
+
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(
@@ -26,6 +29,18 @@ class MusicActivity : AppCompatActivity() {
             val binder = service as MusicBoundService.MusicBinder
             musicBoundService = binder.getService()
             isBound = true
+
+            musicBoundService?.setListener(object : MusicStateListener {
+                override fun stateChanged(isPlaying: Boolean) {
+                    runOnUiThread {
+                        if (!isPlaying) {
+                            playBtn.text = getString(R.string.play_music)
+                        } else {
+                            playBtn.text = getString(R.string.pause_music)
+                        }
+                    }
+                }
+            })
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
@@ -58,15 +73,15 @@ class MusicActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        val playBtn = findViewById<Button>(R.id.btn_play_music)
+        playBtn = findViewById(R.id.btn_play_music)
 
         playBtn.setOnClickListener {
             if (isBound) {
                 if (musicBoundService?.isMusicPlaying() == true) {
-                    playBtn.text = "Play Music"
+                    playBtn.text = getString(R.string.play_music)
                     musicBoundService?.pauseMusic()
                 } else {
-                    playBtn.text = "Pause Music"
+                    playBtn.text = getString(R.string.pause_music)
                     musicBoundService?.playMusic()
                 }
             }

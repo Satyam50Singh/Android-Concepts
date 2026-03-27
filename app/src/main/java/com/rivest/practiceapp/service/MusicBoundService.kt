@@ -8,7 +8,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
+import com.rivest.practiceapp.listeners.MusicStateListener
 
 class MusicBoundService : Service() {
 
@@ -16,6 +16,12 @@ class MusicBoundService : Service() {
     private var isPlaying = false
     private var isForegroundStarted = false
     val channelId: String = "music_channel"
+
+    private var listener: MusicStateListener? = null
+
+    fun setListener(listener: MusicStateListener) {
+        this.listener = listener
+    }
 
     inner class MusicBinder : Binder() {
         fun getService(): MusicBoundService = this@MusicBoundService
@@ -62,13 +68,13 @@ class MusicBoundService : Service() {
     fun playMusic() {
         isPlaying = true
         updateNotification()
-        Log.d("MusicService", "Music Playing")
+        listener?.stateChanged(isPlaying)
     }
 
     fun pauseMusic() {
         isPlaying = false
         updateNotification()
-        Log.d("MusicService", "Music Paused")
+        listener?.stateChanged(isPlaying)
     }
 
     fun isMusicPlaying(): Boolean = isPlaying
@@ -119,6 +125,7 @@ class MusicBoundService : Service() {
         isPlaying = false
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+        listener?.stateChanged(isPlaying)
     }
 
 }
