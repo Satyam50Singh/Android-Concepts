@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
@@ -22,6 +23,7 @@ import com.rivest.practiceapp.service.DownloadBackgroundService
 import com.rivest.practiceapp.service.MyForegroundService
 import com.rivest.practiceapp.ui.activities.MainActivity2
 import com.rivest.practiceapp.workers.UploadDocWorker
+import com.rivest.practiceapp.workers.UploadFileForegroundWorker
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -46,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         val btnBackgroundService = findViewById<Button>(R.id.btn_background_service)
         val btnUploadWorker = findViewById<Button>(R.id.btn_upload_worker)
         val btnPeriodicWorker = findViewById<Button>(R.id.btn_periodic_worker)
+        val btnForegroundWorker = findViewById<Button>(R.id.btn_foreground_worker)
         btnForegroundService.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (checkNotificationPermission()) {
@@ -90,6 +93,14 @@ class MainActivity : AppCompatActivity() {
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
             )
+        }
+
+        btnForegroundWorker.setOnClickListener {
+            val workRequest = OneTimeWorkRequestBuilder<UploadFileForegroundWorker>()
+                .build()
+
+            WorkManager.getInstance(this)
+                .enqueueUniqueWork("upload_work", ExistingWorkPolicy.REPLACE, workRequest)
         }
     }
 
