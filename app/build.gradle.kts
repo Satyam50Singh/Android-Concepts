@@ -46,4 +46,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // work manager
+    implementation(libs.androidx.work.runtime.ktx)
 }

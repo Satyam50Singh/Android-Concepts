@@ -35,7 +35,7 @@
             android:foregroundServiceType="mediaPlayback"/>
 
         <activity
-            android:name=".ui.activities.MusicActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,7 +48,7 @@
             android:name=".ui.activities.MainActivity2"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activities.MusicActivity"
             android:exported="false" />
     </application>
 
