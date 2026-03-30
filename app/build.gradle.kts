@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -35,6 +36,13 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        compose = true
+    }
+
+//    composeOptions {
+//        kotlinCompilerExtensionVersion = "1.5.4"
+//    }
 }
 
 dependencies {
@@ -49,4 +57,18 @@ dependencies {
 
     // work manager
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Compose BOM (recommended)
+    implementation(platform(libs.androidx.compose.bom))
+
+    // Core Compose
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+
+    // Activity integration
+    implementation(libs.androidx.activity.compose)
+
+    // Debug tools
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }

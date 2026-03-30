@@ -1,5 +1,6 @@
-package com.rivest.practiceapp
+package com.rivest.practiceapp.ui.activities
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -19,9 +20,9 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.rivest.practiceapp.R
 import com.rivest.practiceapp.service.DownloadBackgroundService
 import com.rivest.practiceapp.service.MyForegroundService
-import com.rivest.practiceapp.ui.activities.MainActivity2
 import com.rivest.practiceapp.workers.UploadDocWorker
 import com.rivest.practiceapp.workers.UploadFileForegroundWorker
 import java.util.concurrent.TimeUnit
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                 if (checkNotificationPermission()) {
                     startMyService()
                 } else {
-                    requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 100)
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
                 }
             } else {
                 startMyService()
@@ -76,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                 .setConstraints(constraints)
                 .build()
 
-            WorkManager.getInstance(this).enqueue(workRequest)
+            WorkManager.Companion.getInstance(this).enqueue(workRequest)
         }
 
         btnPeriodicWorker.setOnClickListener {
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 .setConstraints(constraints)
                 .build()
 
-            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            WorkManager.Companion.getInstance(this).enqueueUniquePeriodicWork(
                 "UploadDocWork",
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
@@ -99,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             val workRequest = OneTimeWorkRequestBuilder<UploadFileForegroundWorker>()
                 .build()
 
-            WorkManager.getInstance(this)
+            WorkManager.Companion.getInstance(this)
                 .enqueueUniqueWork("upload_work", ExistingWorkPolicy.REPLACE, workRequest)
         }
     }
@@ -142,7 +143,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkNotificationPermission(): Boolean {
-        return checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        return checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onRequestPermissionsResult(
